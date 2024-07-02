@@ -87,8 +87,8 @@ export default class NestedList {
       style: this.defaultListStyle,
       items: [],
     };
-    this.data = data && Object.keys(data).length ? data : initialData;
-
+    this.data = this.migrateData(data && Object.keys(data).length ? data : initialData)
+    
     /**
      * Instantiate caret helper
      */
@@ -895,5 +895,18 @@ export default class NestedList {
         };
       },
     };
+  }
+
+  migrateData(data) {
+    if (data && data.items && data.items.length > 0 && typeof data.items[0] === "string") {
+      return {
+        style: data.style,
+        items: data.items.map((text) => ({
+          content: text,
+          items: [],
+        })),
+      };
+    }
+    return data
   }
 }
